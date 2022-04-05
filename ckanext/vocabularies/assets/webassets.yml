@@ -1,0 +1,14 @@
+# vocabularies-js:
+#   filter: rjsmin
+#   output: ckanext-vocabularies/%(version)s-vocabularies.js
+#   contents:
+#     - js/vocabularies.js
+#   extra:
+#     preload:
+#       - base/main
+
+# vocabularies-css:
+#   filter: cssrewrite
+#   output: ckanext-vocabularies/%(version)s-vocabularies.css
+#   contents:
+#     - css/vocabularies.css

@@ -1,0 +1,6 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="rest:get:/webhooks/poolparty/vocabulary/update:/{projectId}"></from>
+        <log message="The project with id {projectId} was updated on {server}"></log>
+    </route>
+</routes>
