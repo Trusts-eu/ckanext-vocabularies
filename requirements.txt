@@ -1,2 +1,4 @@
-rdflib
+rdflib==4.2.1
 SPARQLWrapper
+rdflib-sqlalchemy==0.4.0
+psycopg2-binary
