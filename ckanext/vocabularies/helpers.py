@@ -1,27 +1,30 @@
-from SPARQLWrapper import SPARQLWrapper, XML, JSON
+from SPARQLWrapper import SPARQLWrapper, JSON
 import requests
 import json
 import logging
 
 import ckan.plugins.toolkit as toolkit
-from rdflib import plugin, Graph, Literal, URIRef
+from rdflib import plugin, URIRef
 from rdflib.graph import Graph
 from rdflib.store import Store
 from rdflib_sqlalchemy import registerplugins
 
 from ckanext.vocabularies.dsc.subscribe import Subscription
-import psycopg2
 
 log = logging.getLogger("ckanext.vocabularies")
 
-registerplugins()
 
+
+# deprecated
 ## create local triplestore on postgresql
-
+registerplugins()
 store = plugin.get("SQLAlchemy", Store)(identifier="vocabularies_store")
+
+# keeps graphs in memory
 graphs = dict()
 
-def query_with_in_scheme(concept_scheme):
+
+def query_with_in_scheme(concept_scheme, lang="en"):
     if concept_scheme != None:
         in_scheme_triple = "?concept skos:inScheme <%(concept_scheme)s>"%dict(concept_scheme=concept_scheme)
     else: in_scheme_triple = ''
@@ -35,11 +38,10 @@ def query_with_in_scheme(concept_scheme):
                 OPTIONAL { ?concept skos:broader+ ?broader .
                            ?broader skos:prefLabel ?broaderPrefLabel .
                         }
-                FILTER ( langMatches( lang(?prefLabel), 'en') && langMatches( lang(?broaderPrefLabel), 'en'))       
+                FILTER ( langMatches( lang(?prefLabel), "%(lang)s") && langMatches( lang(?broaderPrefLabel), "%(lang)s"))       
                 }
                 group by ?concept ?prefLabel
-            """%dict(in_scheme_triple=in_scheme_triple)
-
+            """%dict(in_scheme_triple=in_scheme_triple, lang=lang)
 
 
 def query_poolparty(sparql_endpoint, query):
@@ -88,11 +90,11 @@ def query_dsc_resource(dsc_resource, dsc_resource_contract,query):
         subscription = Subscription(dsc_resource, dsc_resource_contract)
         subscription.make_agreement()
         data = subscription.consume_resource()
+
         graph.parse(data=data, format="text/turtle")
         graphs[dsc_resource] = graph
     results = json.loads(graph.query(query).serialize(format='json'))
     return results
-
 
 # deprecated
 def query_dsc_resource_rdbms(dsc_resource, query):
@@ -108,7 +110,7 @@ def query_dsc_resource_rdbms(dsc_resource, query):
     graph.close()
     return results
 
-
+# deprecated, keeping in case we need to use external triplestore
 def load_triples(dsc_resource, graph):
     log.info('Opening store')
     graph.open(URIRef(toolkit.config.get('ckanext.vocabularies.triplestore')), create=True)
@@ -116,6 +118,7 @@ def load_triples(dsc_resource, graph):
     graph.parse("test.ttl", format="text/turtle")
     log.info('Finished adding triples')
     return graph
+
 
 def skos_choices_sparql_helper(field):
     '''Return a list of the concepts of a concept scheme served from a SPARQL endpoint'''

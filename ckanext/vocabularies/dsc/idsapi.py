@@ -65,3 +65,23 @@ class IdsApi:
             return obj
         else:
             return [obj]
+
+    def create_data_source(self, data={}):
+        response = self.session.post(self.recipient + "/api/datasources", json=data)
+        return json.loads(response.text)
+
+    def create_endpoint(self, data={}):
+        response = self.session.post(self.recipient + "/api/endpoints", json=data)
+        return json.loads(response.text)
+
+    def link_endpoint_datasource(self, endpointId, datasourceId):
+        response = self.session.put(self.recipient + "/api/endpoints/" + endpointId + "/datasource/" + datasourceId)
+        return response.status_code == 204
+
+    def create_route(self, data={}):
+        response = self.session.post(self.recipient + "/api/routes/", json=data)
+        return json.loads(response.text)
+
+    def link_route_endpoint(self, routeId, endpointId):
+        response = self.session.put(self.recipient + "/api/routes/" + routeId + "/endpoint/end", data=endpointId)
+        return response.status_code == 204
