@@ -106,10 +106,10 @@ class Subscription:
         data = {
             "title": "CKAN on " + local_node + "vocabulary subscription",
             "description": "",
-            "target": self.first_artifact,
-            "location": self.route,
+            "target": self.first_artifact.replace(local_node + ":8282", "http://locahlost:8080"),
+            "location": self.route.replace(local_node + ":8282", "http://localhost:8080"),
             "subscriber":  local_node + ":5000",
-            "pushData": "true",
+            "pushData": "false",
         }
 
         response = consumerSub.create_subscription(data=data)
