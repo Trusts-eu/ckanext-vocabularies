@@ -6,8 +6,8 @@ import logging
 import ckan.plugins.toolkit as toolkit
 from rdflib import plugin, URIRef
 from rdflib.graph import Graph
-from rdflib.store import Store
-from rdflib_sqlalchemy import registerplugins
+#from rdflib.store import Store
+#from rdflib_sqlalchemy import registerplugins
 
 from ckanext.vocabularies.dsc.subscribe import Subscription
 
@@ -17,8 +17,8 @@ log = logging.getLogger("ckanext.vocabularies")
 
 # deprecated
 ## create local triplestore on postgresql
-registerplugins()
-store = plugin.get("SQLAlchemy", Store)(identifier="vocabularies_store")
+#registerplugins()
+#store = plugin.get("SQLAlchemy", Store)(identifier="vocabularies_store")
 
 # keeps graphs in memory
 graphs = dict()
@@ -97,18 +97,18 @@ def query_dsc_resource(dsc_resource, dsc_resource_contract,query):
     return results
 
 # deprecated
-def query_dsc_resource_rdbms(dsc_resource, query):
-    graph = Graph(store, identifier=dsc_resource)
-    try:
-        graph.open(URIRef(toolkit.config.get('ckanext.vocabularies.triplestore')), create=False)
-        log.info('Graph exists in triplestore...querying')
-    except RuntimeError as error:
-        log.info('Graph does not exist on triplestore...adding triples')
-        print(error)
-        graph = load_triples(dsc_resource, graph)
-    results = json.loads(graph.query(query).serialize(format='json'))
-    graph.close()
-    return results
+# def query_dsc_resource_rdbms(dsc_resource, query):
+#     graph = Graph(store, identifier=dsc_resource)
+#     try:
+#         graph.open(URIRef(toolkit.config.get('ckanext.vocabularies.triplestore')), create=False)
+#         log.info('Graph exists in triplestore...querying')
+#     except RuntimeError as error:
+#         log.info('Graph does not exist on triplestore...adding triples')
+#         print(error)
+#         graph = load_triples(dsc_resource, graph)
+#     results = json.loads(graph.query(query).serialize(format='json'))
+#     graph.close()
+#     return results
 
 # deprecated, keeping in case we need to use external triplestore
 def load_triples(dsc_resource, graph):
