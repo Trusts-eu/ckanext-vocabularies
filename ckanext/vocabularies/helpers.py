@@ -56,7 +56,7 @@ def query_public_endpoint(sparql_endpoint, query):
     return sparql.queryAndConvert()
 
 
-def format_results(results):
+def format_results(results, sort_field: str = "label"):
     skos_choices = []
     if results['results']['bindings']:
         bindings = results['results']['bindings']
@@ -75,7 +75,7 @@ def format_results(results):
             }
             skos_choices.append(choice)
         log.info('reformatted results')
-        return sorted(skos_choices, key=lambda d: d['label'])
+        return sorted(skos_choices, key=lambda d: d[sort_field])
     else:
         return skos_choices.append({'value': '', 'label': 'empty'})
 
@@ -140,3 +140,11 @@ def skos_choices_sparql_helper(field):
 
     log.info('received results')
     return format_results(results)
+
+
+def skos_choices_get_label_by_value(formated_results: list, value: str):
+    for choice in formated_results:
+        if choice["value"] == value:
+            return choice["label"]
+    return value
+
