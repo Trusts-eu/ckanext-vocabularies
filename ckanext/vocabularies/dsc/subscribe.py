@@ -10,14 +10,13 @@ from ckanext.vocabularies.dsc.subscriptionapi import SubscriptionApi
 from ckanext.vocabularies.dsc.idsapi import IdsApi
 
 log = logging.getLogger("ckanext.vocabularies.dsc.subscribe")
-
-consumerUrl = toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_url') + ":" + toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_port')
-username = toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_username')
-password = toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_password')
-consumer_alias = consumerUrl
-
-consumer = IdsApi(consumerUrl, auth=(username, password))
-local_node = toolkit.config.get("ckanext.ids.trusts_local_dataspace_connector_url")
+# TODO: too hacky, fix this
+consumerUrl = None
+username = None
+password = None
+consumer_alias = None
+consumer = None
+local_node = None
 
 
 class Subscription:
@@ -38,6 +37,14 @@ class Subscription:
 
         parsed_url = urlparse(offer_url)
         self.provider_alias = parsed_url.scheme + "://" + parsed_url.netloc
+        # TODO: Fix this
+        consumerUrl = toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_url') + ":" + toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_port')
+        username = toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_username')
+        password = toolkit.config.get('ckanext.ids.trusts_local_dataspace_connector_password')
+        consumer_alias = consumerUrl
+
+        consumer = IdsApi(consumerUrl, auth=(username, password))
+        local_node = toolkit.config.get("ckanext.ids.trusts_local_dataspace_connector_url")
 
     # IDS
     # Call description
