@@ -149,7 +149,7 @@ def skos_choices_sparql_helper(field):
         log.info('querying dsc')
         results = query_dsc_resource(dsc_resource, dsc_resource_contract, query)
     elif local_resource is not None:
-        results = query_local_resource(local_respource, query)
+        results = query_local_resource(local_resource, query)
     elif is_poolparty:
         results = query_poolparty(sparql_endpoint, query)    
     else:
