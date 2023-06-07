@@ -99,7 +99,7 @@ def query_dsc_resource(dsc_resource, dsc_resource_contract,query):
     return results
 
 def query_local_resource(local_resource, query):
-    graph_id = uuid.uuid4(local_resource)
+    graph_id = local_resource
     if graph_id in graphs:
         graph = graphs[graph_id]
         log.debug('Graph exists in triplestore...querying')
