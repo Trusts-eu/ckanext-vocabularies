@@ -2,6 +2,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 import requests
 import json
 import logging
+import uuid
 
 import ckan.plugins.toolkit as toolkit
 from rdflib import plugin, URIRef
@@ -96,6 +97,19 @@ def query_dsc_resource(dsc_resource, dsc_resource_contract,query):
     results = json.loads(graph.query(query).serialize(format='json'))
     return results
 
+def query_local_resource(local_resource, query):
+    graph_id = uuid.uuid4(local_resource)
+    if graph_id in graphs:
+        graph = graphs[graph_id]
+        log.debug('Graph exists in triplestore...querying')
+    else:
+        log.warn('Graph does not exist on triplestore...adding triples')
+        graph = Graph()
+        graph.parse(local_resource, format="text/turtle")
+        graphs[graph_id] = graph
+    results = json.loads(graph.query(query).serialize(format='json'))
+    return results
+
 # deprecated
 # def query_dsc_resource_rdbms(dsc_resource, query):
 #     graph = Graph(store, identifier=dsc_resource)
@@ -126,6 +140,7 @@ def skos_choices_sparql_helper(field):
     sparql_endpoint = field.get('skos_choices_sparql_endpoint', None)
     is_poolparty = field.get('skos_choices_is_poolparty', False)
     concept_scheme = field.get('skos_choices_concept_scheme', None)
+    local_resource = field.get('skos_choices_local_resource', None)
     dsc_resource = field.get('skos_choices_dsc_resource', None)
     dsc_resource_contract = field.get('skos_choices_dsc_resource_contract_offer', None)
 
@@ -133,8 +148,10 @@ def skos_choices_sparql_helper(field):
     if dsc_resource is not None:
         log.info('querying dsc')
         results = query_dsc_resource(dsc_resource, dsc_resource_contract, query)
+    elif local_resource is not None:
+        results = query_local_resource(local_respource, query)
     elif is_poolparty:
-        results = query_poolparty(sparql_endpoint, query)
+        results = query_poolparty(sparql_endpoint, query)    
     else:
         results = query_public_endpoint(sparql_endpoint, query)
 
