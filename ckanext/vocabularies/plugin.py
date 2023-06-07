@@ -45,7 +45,11 @@ class VocabulariesPlugin(plugins.SingletonPlugin):
             'vocabularies')
         SQLALCHEMY_URL = toolkit.config.get('sqlalchemy.url').replace("postgresql", "postgresql+psycopg2")
         toolkit.config.store.update({'ckanext.vocabularies.triplestore': SQLALCHEMY_URL})
-        self.find_or_create_dsc_user()
+        try:
+            from ckanext.ids.model import IdsResource
+            self.find_or_create_dsc_user()
+        except ModuleNotFoundError:
+            pass
 
     # Declare that this plugin will implement ITemplateHelpers.
     plugins.implements(plugins.ITemplateHelpers)
