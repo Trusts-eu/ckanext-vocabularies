@@ -1,5 +1,4 @@
 import logging
-from ckanext.ids.model import IdsResource, IdsAgreement
 from ckanext.vocabularies.dsc.subscribe import Subscription
 from ckanext.vocabularies.helpers import graphs
 from rdflib import Graph
@@ -8,6 +7,10 @@ log = logging.getLogger("ckanext.vocabularies.logic")
 
 
 def update_vocabulary_dsc(dsc_resource):
+    try:
+        from ckanext.ids.model import IdsResource
+    except ModuleNotFoundError:
+        return
     local_resource = IdsResource.get(dsc_resource)
     local_agreement = local_resource.get_agreements()[0]
     log.info("Found the agreement url:" + local_agreement.id)
