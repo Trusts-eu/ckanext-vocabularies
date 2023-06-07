@@ -3,7 +3,6 @@ import logging
 import ckan.plugins.toolkit as toolkit
 
 import pathlib
-from ckanext.ids.model import IdsResource, IdsAgreement, IdsSubscription
 from urllib.parse import urlparse
 from ckanext.vocabularies.dsc.resourceapi import ResourceApi
 from ckanext.vocabularies.dsc.subscriptionapi import SubscriptionApi
@@ -49,6 +48,10 @@ class Subscription:
     # IDS
     # Call description
     def make_agreement(self):
+        try:
+            from ckanext.ids.model import IdsResource, IdsAgreement
+        except ModuleNotFoundError:
+            return
         log.info("Making agreement...")
         offer = consumer.descriptionRequest(self.provider_alias + "/api/ids/data", self.offer_url)
         log.debug(offer)
@@ -96,6 +99,10 @@ class Subscription:
 # Consumer
 
     def subscribe(self):
+        try:
+            from ckanext.ids.model import IdsAgreement, IdsSubscription
+        except ImportError:
+            return
         self.create_data_source()
         self.create_endpoint()
         self.link_endpoint_data_source()
