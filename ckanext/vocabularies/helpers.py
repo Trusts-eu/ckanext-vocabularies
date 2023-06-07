@@ -38,8 +38,9 @@ def query_with_in_scheme(concept_scheme, lang="en"):
                 %(in_scheme_triple)s         
                 OPTIONAL { ?concept skos:broader+ ?broader .
                            ?broader skos:prefLabel ?broaderPrefLabel .
+                           FILTER (langMatches( lang(?broaderPrefLabel), "%(lang)s"))
                         }
-                FILTER ( langMatches( lang(?prefLabel), "%(lang)s") && langMatches( lang(?broaderPrefLabel), "%(lang)s"))       
+                FILTER ( langMatches( lang(?prefLabel), "%(lang)s"))       
                 }
                 group by ?concept ?prefLabel
             """%dict(in_scheme_triple=in_scheme_triple, lang=lang)
